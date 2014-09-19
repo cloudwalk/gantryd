@@ -326,3 +326,26 @@ Killing container d05d73bc6c3
 Checking container statuses...
 Shutting down proxy...
 ```
+### Running it from a container
+
+You can build an image of gantryd:
+```
+docker build -t cloudwalk/gantry .
+```
+
+To use this image, we need to mount host's Docker socket inside the container. It will listen for HTTP connections in container's port 5000, so you need to bind to it:
+```
+docker run -d -v /var/run/docker.sock:/var/run/docker.sock -p 1644:5000 cloudwalk/gantry
+```
+
+After the container is online, we can use curl to send HTTP requests to it:
+```
+# Send a configuration file to container
+curl --form "config=@/path/to/config/in/host/config.json" "http://localhost:1644/config"
+
+# List container's running project
+curl "http://localhost:5000/list?config=config.json&project=projectname"
+
+# Update project
+curl "http://localhost:5000/update?config=config.json&project=projectname"
+```
