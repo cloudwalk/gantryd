@@ -4,3 +4,4 @@ psutil
 jinja2
 python-etcd
 peewee
+flask
