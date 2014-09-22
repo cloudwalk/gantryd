@@ -47,7 +47,7 @@ def stop():
     return r
 
 @app.route('/kill', methods=['GET'])
-def stop():
+def kill():
     config_file = request.args.get('config')
     filepath = os.path.join(app.config['UPLOAD_FOLDER'], config_file)
     project_name = request.args.get('project')
