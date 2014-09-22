@@ -330,12 +330,12 @@ Shutting down proxy...
 
 You can build an image of gantryd:
 ```
-docker build -t cloudwalk/gantry .
+docker build -t cloudwalk/gantryd .
 ```
 
-To use this image, we need to mount host's Docker socket inside the container. It will listen for HTTP connections in container's port 5000, so you need to bind to it:
+To use this image, we need to mount host's Docker socket inside the container. It will listen for HTTP connections in container's port 5000, so you need to bind this port to a host's port. One issue, though, is we need to forward connections on host to haproxy runnning inside gantryd container, so we must bind our application ports when starting gantryd. For example, suppose you will use gantryd to update a webserver listening to port 80 (as exposed by its container). We need to bind this port in gantry. Here is the command do run gantryd listening to port 1644, exposing port 80 for your application:
 ```
-docker run -d -v /var/run/docker.sock:/var/run/docker.sock -p 1644:5000 cloudwalk/gantry
+docker run -d -v /var/run/docker.sock:/var/run/docker.sock -p 1644:5000 -p 80:80 cloudwalk/gantryd
 ```
 
 After the container is online, we can use curl to send HTTP requests to it:
@@ -344,8 +344,8 @@ After the container is online, we can use curl to send HTTP requests to it:
 curl --form "config=@/path/to/config/in/host/config.json" "http://localhost:1644/config"
 
 # List container's running project
-curl "http://localhost:5000/list?config=config.json&project=projectname"
+curl "http://localhost:1644/list?config=config.json&project=projectname"
 
 # Update project
-curl "http://localhost:5000/update?config=config.json&project=projectname"
+curl "http://localhost:1644/update?config=config.json&project=projectname"
 ```
