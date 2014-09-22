@@ -46,6 +46,15 @@ def stop():
     r = subprocess.check_output(['./gantry.py', filepath, 'stop', project_name])
     return r
 
+@app.route('/kill', methods=['GET'])
+def stop():
+    config_file = request.args.get('config')
+    filepath = os.path.join(app.config['UPLOAD_FOLDER'], config_file)
+    project_name = request.args.get('project')
+
+    r = subprocess.check_output(['./gantry.py', filepath, 'kill', project_name])
+    return r
+
 @app.route('/update', methods=['GET'])
 def update():
     config_file = request.args.get('config')
